@@ -13,7 +13,7 @@ namespace ReviewSystem.Data
 		{
 			if (!_context.ProductSellers.Any())
 			{
-				var pokemonOwners = new List<ProductSeller>()
+				var productOwners = new List<ProductSeller>()
 				{
 					new ProductSeller()
 					{
@@ -27,7 +27,7 @@ namespace ReviewSystem.Data
 							},
 							Reviews = new List<Review>()
 							{
-								new Review { Title="Table",Text = "it is the best pokemon, because it is electric", Rating = 5,
+								new Review { Title="Table",Text = "it is the best productId, because it is electric", Rating = 5,
 								Reviewer = new Reviewer(){ FirstName = "Teddy", LastName = "Smith" } },
 								new Review { Title="Table", Text = "killing rocks", Rating = 5,
 								Reviewer = new Reviewer(){ FirstName = "Taylor", LastName = "Jones" } },
@@ -54,7 +54,7 @@ namespace ReviewSystem.Data
 							},
 							Reviews = new List<Review>()
 							{
-                                new Review { Title="Shoes",Text = "it is the best pokemon, because it is electric", Rating = 5,
+                                new Review { Title="Shoes",Text = "it is the best productId, because it is electric", Rating = 5,
                                 Reviewer = new Reviewer(){ FirstName = "Teddy", LastName = "Smith" } },
                                 new Review { Title="Shoes", Text = "killing rocks", Rating = 5,
                                 Reviewer = new Reviewer(){ FirstName = "Taylor", LastName = "Jones" } },
@@ -98,7 +98,7 @@ namespace ReviewSystem.Data
 						}
 					}
 				};
-				_context.ProductSellers.AddRange(pokemonOwners);
+				_context.ProductSellers.AddRange(productOwners);
 				_context.SaveChanges();
 			}
 		}

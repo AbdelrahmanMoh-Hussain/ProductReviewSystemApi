@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewSystem.Data.Repositroy.IRepository;
-using ReviewSystem.Dto;
+using ReviewSystem.Dto.Get;
 using ReviewSystem.Models;
 
 namespace ReviewSystem.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class SellerController : ControllerBase
 	{
@@ -58,27 +58,27 @@ namespace ReviewSystem.Controllers
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ProductDto>))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public IActionResult GetPokemonBySeller(int sellerId)
+		public IActionResult GetProductBySeller(int sellerId)
 		{
 			if (sellerId <= 0)
 				return BadRequest();
 
-			var pokemons = _unitOfWork.Seller.GetProductBySeller(sellerId);
-			if (pokemons == null)
+			var products = _unitOfWork.Seller.GetProductBySeller(sellerId);
+			if (products == null)
 				return NotFound();
-			var pokemonDto = _mapper.Map<List<ProductDto>>(pokemons);
+			var productDto = _mapper.Map<List<ProductDto>>(products);
 
 			if (!ModelState.IsValid)
 				return BadRequest();
 
-			return Ok(pokemonDto);
+			return Ok(productDto);
 		}
 
 		[HttpGet("seller/{productId:int}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<SellerDto>))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public IActionResult GetPokemonSeller(int productId)
+		public IActionResult GetProductSeller(int productId)
 		{
 			if (productId <= 0)
 				return BadRequest();
@@ -93,5 +93,26 @@ namespace ReviewSystem.Controllers
 
 			return Ok(SellersDto);
 		}
-	}
+
+        [HttpDelete("sellerId/{sellerId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult DeleteReview(int sellerId)
+        {
+            if (sellerId == 0)
+                return BadRequest();
+
+            var seller = _unitOfWork.Seller.Get(x => x.Id == sellerId);
+            if (seller == null)
+                return NotFound();
+
+            _unitOfWork.Seller.Remove(seller);
+
+            var result = _unitOfWork.Save();
+            if (!result)
+                return BadRequest("Error while saving");
+
+            return Ok();
+        }
+    }
 }

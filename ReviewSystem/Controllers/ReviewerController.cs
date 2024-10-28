@@ -2,12 +2,12 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewSystem.Data.Repositroy.IRepository;
-using ReviewSystem.Dto;
+using ReviewSystem.Dto.Get;
 using ReviewSystem.Models;
 
 namespace ReviewSystem.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class ReviewerController : ControllerBase
 	{
@@ -63,7 +63,7 @@ namespace ReviewSystem.Controllers
 			if (reviewerId <= 0)
 				return BadRequest();
 
-			var reviews = _unitOfWork.Review.GetProductReviews(reviewerId);
+			var reviews = _unitOfWork.Reviewer.GetReviewerReviews(reviewerId);
 			if (reviews == null)
 				return NotFound();
 			var reviewsDto = _mapper.Map<List<ReviewDto>>(reviews);
@@ -73,5 +73,26 @@ namespace ReviewSystem.Controllers
 
 			return Ok(reviewsDto);
 		}
-	}
+
+        [HttpDelete("reviewerId/{reviewerId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult DeleteReview(int reviewerId)
+        {
+            if (reviewerId == 0)
+                return BadRequest();
+
+            var reviewer = _unitOfWork.Reviewer.Get(x => x.Id == reviewerId);
+            if (reviewer == null)
+                return NotFound();
+
+            _unitOfWork.Reviewer.Remove(reviewer);
+
+            var result = _unitOfWork.Save();
+            if (!result)
+                return BadRequest("Error while saving");
+
+            return Ok();
+        }
+    }
 }

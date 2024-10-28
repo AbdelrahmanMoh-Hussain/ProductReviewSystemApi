@@ -3,13 +3,15 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using ReviewSystem.Data.Repositroy.IRepository;
-using ReviewSystem.Dto;
+using ReviewSystem.Dto.Get;
+using ReviewSystem.Dto.Post;
+using ReviewSystem.Dto.Put;
 using ReviewSystem.Models;
 using System.Collections.Generic;
 
 namespace ReviewSystem.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class ProductController : ControllerBase
 	{
@@ -75,5 +77,62 @@ namespace ReviewSystem.Controllers
 
 			return Ok(rating);
 		}
-	}
+
+
+        [HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult AddProduct(CreateProductDto productDto)
+        {
+            var product = _mapper.Map<Product>(productDto);
+            _unitOfWork.Product.Add(product);
+            _unitOfWork.Save();
+            return Ok(product);
+        }
+
+        [HttpPut("productId/{productId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult UpdateReview(CreateProductDto productDto, int productId)
+        {
+            if (productDto is null || productId == 0)
+                return BadRequest();
+
+            var product = _unitOfWork.Product.Get(x => x.Id == productId);
+            if (product == null)
+                return NotFound();
+
+            product.Title = productDto.Title;
+			product.Price = productDto.Price;
+			product.ProductionDate = productDto.ProductionDate;
+
+            var result = _unitOfWork.Save();
+            if (!result)
+                return BadRequest("Error while saving");
+
+
+            return Ok();
+        }
+
+        [HttpDelete("productId/{productId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult DeleteReview(int productId)
+        {
+            if (productId == 0)
+                return BadRequest();
+
+            var product = _unitOfWork.Product.Get(x => x.Id == productId);
+            if (product == null)
+                return NotFound();
+
+            _unitOfWork.Product.Remove(product);
+
+            var result = _unitOfWork.Save();
+            if (!result)
+                return BadRequest("Error while saving");
+
+            return Ok();
+        }
+    }
 }

@@ -21,9 +21,9 @@ namespace ReviewSystem.Data.Repositroy
 		public IReviewRepository Review {  get; set; }
 		public IReviewerRepository Reviewer {  get; set; }
 
-		public void Save()
+		public bool Save()
 		{
-			_context.SaveChanges();
+			return _context.SaveChanges() > 0 ? true : false;
 		}
 	}
 }

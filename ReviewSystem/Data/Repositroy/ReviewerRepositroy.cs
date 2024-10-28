@@ -17,6 +17,7 @@ namespace ReviewSystem.Data.Repositroy
 		{
 			return _context.Reviews
 				.Where(x => x.ReviewerId == reviewerId)
+				.Include(x => x.Product)
 				.ToList();
 		}
 	}

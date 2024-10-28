@@ -3,7 +3,7 @@ using ReviewSystem.Models;
 
 namespace ReviewSystem.Data.Repositroy
 {
-	public class CategoryRepository : Repository<Category>, ICategoryRepository
+    public class CategoryRepository : Repository<Category>, ICategoryRepository
 	{
 		private readonly AppDbContext _context;
 		public CategoryRepository(AppDbContext context) 
@@ -13,7 +13,7 @@ namespace ReviewSystem.Data.Repositroy
 		}
 
 		
-		public ICollection<Product> GetPokemonByCategory(int categoryId)
+		public ICollection<Product> GetProductByCategory(int categoryId)
 		{
 			return _context.ProductCategories
 				.Where(x => x.CategoryId == categoryId)

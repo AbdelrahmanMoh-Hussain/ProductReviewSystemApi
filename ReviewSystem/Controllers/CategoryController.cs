@@ -2,12 +2,13 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using ReviewSystem.Data.Repositroy.IRepository;
-using ReviewSystem.Dto;
+using ReviewSystem.Dto.Get;
+using ReviewSystem.Dto.Post;
 using ReviewSystem.Models;
 
 namespace ReviewSystem.Controllers
 {
-	[Route("api/[controller]")]
+    [Route("api/[controller]")]
 	[ApiController]
 	public class CategoryController : ControllerBase
 	{
@@ -54,24 +55,81 @@ namespace ReviewSystem.Controllers
 			return Ok(CategoryDto);
 		}
 
-		[HttpGet("pokemon/{categoryId:int}")]
+		[HttpGet("product/{categoryId:int}")]
 		[ProducesResponseType(StatusCodes.Status200OK, Type = typeof(ICollection<ProductDto>))]
 		[ProducesResponseType(StatusCodes.Status400BadRequest)]
 		[ProducesResponseType(StatusCodes.Status404NotFound)]
-		public IActionResult GetPokemonByCategory(int categoryId)
+		public IActionResult GetProductByCategory(int categoryId)
 		{
 			if (categoryId <= 0)
 				return BadRequest();
 
-			var pokemons = _unitOfWork.Category.GetPokemonByCategory(categoryId);
-			if (pokemons == null)
+			var products = _unitOfWork.Category.GetProductByCategory(categoryId);
+			if (products == null)
 				return NotFound();
-			var pokemonDto = _mapper.Map<List<ProductDto>>(pokemons);
+			var productDto = _mapper.Map<List<ProductDto>>(products);
 
 			if (!ModelState.IsValid)
 				return BadRequest();
 			
-			return Ok(pokemonDto);
+			return Ok(productDto);
 		}
-	}
+
+		[HttpPost]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult AddCategory(CreateCategoryDto categoryDto) 
+		{
+			var category = new Category
+			{
+				Name = categoryDto.Name,
+			};
+			_unitOfWork.Category.Add(category);
+			_unitOfWork.Save();
+			return Ok(category);
+		}
+
+        [HttpPut("categoryId/{categoryId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult DeleteReview(CreateCategoryDto categoryDto ,int categoryId)
+        {
+            if (categoryDto == null || categoryId == 0)
+                return BadRequest();
+
+            var category = _unitOfWork.Category.Get(x => x.Id == categoryId);
+            if (category == null)
+                return NotFound();
+
+            category.Name = categoryDto.Name;
+
+            var result = _unitOfWork.Save();
+            if (!result)
+                return BadRequest("Error while saving");
+
+            return Ok();
+        }
+
+        [HttpDelete("categoryId/{categoryId:int}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+
+        public IActionResult DeleteReview(int categoryId)
+        {
+            if (categoryId == 0)
+                return BadRequest();
+
+            var ctegory = _unitOfWork.Category.Get(x => x.Id == categoryId);
+            if (ctegory == null)
+                return NotFound();
+
+            _unitOfWork.Category.Remove(ctegory);
+
+            var result = _unitOfWork.Save();
+            if (!result)
+                return BadRequest("Error while saving");
+
+            return Ok();
+        }
+
+    }
 }

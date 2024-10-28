@@ -8,6 +8,6 @@
 		IReviewRepository Review { get; set; }
 		IReviewerRepository Reviewer { get; set; }
 
-		void Save();
+		bool Save();
 	}
 }

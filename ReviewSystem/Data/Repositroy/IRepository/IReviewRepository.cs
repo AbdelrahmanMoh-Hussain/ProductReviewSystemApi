@@ -4,6 +4,6 @@ namespace ReviewSystem.Data.Repositroy.IRepository
 {
 	public interface IReviewRepository : IRepository<Review>
 	{
-		ICollection<Review> GetProductReviews(int pokemonId);
+		ICollection<Review> GetProductReviews(int productId);
 	}
 }

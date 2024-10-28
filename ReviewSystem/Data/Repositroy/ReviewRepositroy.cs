@@ -1,4 +1,5 @@
-﻿using ReviewSystem.Data.Repositroy.IRepository;
+﻿using Microsoft.EntityFrameworkCore;
+using ReviewSystem.Data.Repositroy.IRepository;
 using ReviewSystem.Models;
 
 namespace ReviewSystem.Data.Repositroy
@@ -16,6 +17,7 @@ namespace ReviewSystem.Data.Repositroy
 		{
 			return _context.Reviews
 				.Where(x => x.ProdcutId ==  productId)
+				.Include(x => x.Product)
 				.ToList();
 		}
 	}
