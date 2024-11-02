@@ -1,5 +1,5 @@
 # ReviewSystem
-##Description
+## Description
 This project is an ASP.NET Core Web API for managing a product catalog, allowing users to interact with products, categories, sellers, and customer reviews. This API serves as a foundational backend for an e-commerce or review-based application, offering a flexible structure to manage and retrieve product-related information efficiently. The database schema is designed to facilitate relationships between various entities:
 - **Products**: Each product includes details like title, production date, and price.
 - **Categories**: Products are associated with multiple categories, creating a many-to-many relationship.
